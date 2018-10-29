@@ -32,6 +32,9 @@ black.onclick = function () {
     red.classList.remove('active');
     green.classList.remove('active');
     blue.classList.remove('active');
+    eraserEnabled = false;
+    brush.classList.add('active');
+    eraser.classList.remove('active');
 }
 red.onclick = function () {
     ctx.strokeStyle = 'red';
@@ -39,6 +42,9 @@ red.onclick = function () {
     green.classList.remove('active');
     blue.classList.remove('active');
     black.classList.remove('active');
+    eraserEnabled = false;
+    brush.classList.add('active');
+    eraser.classList.remove('active');
 }
 green.onclick = function () {
     ctx.strokeStyle = 'green';
@@ -46,6 +52,7 @@ green.onclick = function () {
     red.classList.remove('active');
     blue.classList.remove('active');
     black.classList.remove('active');
+    brush.click();
 }
 blue.onclick = function () {
     ctx.strokeStyle = 'blue';
@@ -53,6 +60,9 @@ blue.onclick = function () {
     green.classList.remove('active');
     red.classList.remove('active');
     black.classList.remove('active');
+    eraserEnabled = false;
+    brush.classList.add('active');
+    eraser.classList.remove('active');
 }
 
 let thin = document.getElementById('thin');
@@ -99,8 +109,11 @@ function listenToMouse(canvas) {
             // console.log(x, y);
             using = true;
             if (eraserEnabled) {
-                ctx.clearRect(x - 5, y - 5, 10, 10);
+                // ctx.clearRect(x - 5, y - 5, 10, 10);
+                eraseCircle(x,y,3);
+                lastPoint = { x: x, y: y };
             } else {
+                drawCircle(x,y,lineWidth/2);
                 lastPoint = { x: x, y: y };
             }
 
@@ -110,14 +123,21 @@ function listenToMouse(canvas) {
             let y = e.touches[0].clientY;
             if (!using) return;
             if (eraserEnabled) {
-                ctx.clearRect(x - 5, y - 5, 10, 10);
+                //解决擦去背景色的问题
+                ctx.save()
+                ctx.strokeStyle = 'white';
+                let newPoint = { x: x, y: y };
+                eraseLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
+                lastPoint = newPoint;
+                ctx.restore();
+                // ctx.clearRect(x - 5, y - 5, 10, 10);
             } else {
                 let newPoint = { x: x, y: y };
                 drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
                 lastPoint = newPoint;
             }
         }
-        canvas.ontouched = function () {
+        canvas.ontouchend = function () {
             using = false;
         }
 
@@ -127,10 +147,13 @@ function listenToMouse(canvas) {
             let x = e.clientX;
             let y = e.clientY;
             using = true;
+            lastPoint = { x: x, y: y };
             if (eraserEnabled) {
-                ctx.clearRect(x - 5, y - 5, 10, 10);
+                // ctx.clearRect(x - 5, y - 5, 10, 10);
+                eraseCircle(x,y,3);
             } else {
-                lastPoint = { x: x, y: y };
+                // lastPoint = { x: x, y: y };
+                drawCircle(x,y,10);
             }
 
         }
@@ -140,7 +163,13 @@ function listenToMouse(canvas) {
             let y = e.clientY;
             if (!using) return;
             if (eraserEnabled) {
-                ctx.clearRect(x - 5, y - 5, 10, 10);
+                // ctx.clearRect(x - 5, y - 5, 10, 10);
+                ctx.save()
+                ctx.strokeStyle = 'white';
+                let newPoint = { x: x, y: y };
+                eraseLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
+                lastPoint = newPoint;
+                ctx.restore();
             } else {
                 let newPoint = { x: x, y: y };
                 drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
@@ -172,20 +201,47 @@ function setCanvasSize() {
     setBackground();
 }
 function setBackground() {
+    ctx.save();
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
 }
 
 function drawCircle(x, y, radius) {
     ctx.beginPath();
+    // fillStyle=strokeStyle;
+    ctx.fillStyle = "black";
+    ctx.fillStyle=strokeStyle;
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
+    ctx.closePath();
 }
+
+function eraseCircle(x, y, radius) {
+    ctx.save();
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    ctx.closePath();
+}
+
+
 
 function drawLine(x1, y1, x2, y2) {
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineWidth = lineWidth;
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.closePath();
+}
+
+function eraseLine(x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineWidth = 8;
     ctx.lineTo(x2, y2);
     ctx.stroke();
     ctx.closePath();
