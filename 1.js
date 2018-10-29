@@ -106,11 +106,10 @@ function listenToMouse(canvas) {
         canvas.ontouchstart = function (e) {
             let x = e.touches[0].clientX;
             let y = e.touches[0].clientY;
-            // console.log(x, y);
             using = true;
             if (eraserEnabled) {
                 // ctx.clearRect(x - 5, y - 5, 10, 10);
-                eraseCircle(x,y,3);
+                eraseCircle(x,y,5);
                 lastPoint = { x: x, y: y };
             } else {
                 drawCircle(x,y,lineWidth/2);
@@ -124,12 +123,13 @@ function listenToMouse(canvas) {
             if (!using) return;
             if (eraserEnabled) {
                 //解决擦去背景色的问题
-                ctx.save()
-                ctx.strokeStyle = 'white';
-                let newPoint = { x: x, y: y };
-                eraseLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
-                lastPoint = newPoint;
-                ctx.restore();
+                // ctx.save()
+                // ctx.strokeStyle = 'white';
+                // let newPoint = { x: x, y: y };
+                // eraseLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
+                // lastPoint = newPoint;
+                // ctx.restore();
+                eraseCircle(x,y,5);
                 // ctx.clearRect(x - 5, y - 5, 10, 10);
             } else {
                 let newPoint = { x: x, y: y };
@@ -147,12 +147,11 @@ function listenToMouse(canvas) {
             let x = e.clientX;
             let y = e.clientY;
             using = true;
-            lastPoint = { x: x, y: y };
             if (eraserEnabled) {
                 // ctx.clearRect(x - 5, y - 5, 10, 10);
-                eraseCircle(x,y,3);
+                eraseCircle(x,y,5);
             } else {
-                // lastPoint = { x: x, y: y };
+                lastPoint = { x: x, y: y };
                 drawCircle(x,y,10);
             }
 
@@ -164,12 +163,13 @@ function listenToMouse(canvas) {
             if (!using) return;
             if (eraserEnabled) {
                 // ctx.clearRect(x - 5, y - 5, 10, 10);
-                ctx.save()
-                ctx.strokeStyle = 'white';
-                let newPoint = { x: x, y: y };
-                eraseLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
-                lastPoint = newPoint;
-                ctx.restore();
+                // ctx.save()
+                // ctx.strokeStyle = 'white';
+                // let newPoint = { x: x, y: y };
+                // eraseLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
+                // lastPoint = newPoint;
+                // ctx.restore();
+                eraseCircle(x,y,5);
             } else {
                 let newPoint = { x: x, y: y };
                 drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y);
@@ -238,11 +238,4 @@ function drawLine(x1, y1, x2, y2) {
     ctx.closePath();
 }
 
-function eraseLine(x1, y1, x2, y2) {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineWidth = 8;
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-    ctx.closePath();
-}
+
