@@ -52,7 +52,9 @@ green.onclick = function () {
     red.classList.remove('active');
     blue.classList.remove('active');
     black.classList.remove('active');
-    brush.click();
+    eraserEnabled = false;
+    brush.classList.add('active');
+    eraser.classList.remove('active');
 }
 blue.onclick = function () {
     ctx.strokeStyle = 'blue';
@@ -110,9 +112,9 @@ function listenToMouse(canvas) {
             if (eraserEnabled) {
                 // ctx.clearRect(x - 5, y - 5, 10, 10);
                 eraseCircle(x,y,5);
-                lastPoint = { x: x, y: y };
+                // lastPoint = { x: x, y: y };
             } else {
-                drawCircle(x,y,lineWidth/2);
+                // drawCircle(x,y,lineWidth/2);
                 lastPoint = { x: x, y: y };
             }
 
@@ -211,7 +213,7 @@ function drawCircle(x, y, radius) {
     ctx.beginPath();
     // fillStyle=strokeStyle;
     ctx.fillStyle = "black";
-    ctx.fillStyle=strokeStyle;
+    // ctx.fillStyle=strokeStyle;
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.closePath();
