@@ -154,7 +154,7 @@ function listenToMouse(canvas) {
                 eraseCircle(x,y,5);
             } else {
                 lastPoint = { x: x, y: y };
-                drawCircle(x,y,10);
+                // drawCircle(x,y,5);
             }
 
         }
